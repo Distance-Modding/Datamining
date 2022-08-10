@@ -1,0 +1,15 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<AssetStudioPath>$(SolutionDir)AssetStudio\</AssetStudioPath>
+		<AssetStudioFBXNative>$(AssetStudioPath)AssetStudioFBXNative\</AssetStudioFBXNative>
+		<AssetStudioFBXNativeDll>AssetStudioFBXNative.dll</AssetStudioFBXNativeDll>
+		<Texture2DDecoderNative>$(AssetStudioPath)Texture2DDecoderNative\</Texture2DDecoderNative>
+		<Texture2DDecoderNativeDll>Texture2DDecoderNative.dll</Texture2DDecoderNativeDll>
+	</PropertyGroup>
+    <ItemGroup>
+		<x32NativeLibraries Include="$(AssetStudioFBXNative)bin\Win32\$(Configuration)\$(AssetStudioFBXNativeDll)"/>
+		<x64NativeLibraries Include="$(AssetStudioFBXNative)bin\x64\$(Configuration)\$(AssetStudioFBXNativeDll)"/>
+		<x32NativeLibraries Include="$(Texture2DDecoderNative)bin\Win32\$(Configuration)\$(Texture2DDecoderNativeDll)"/>
+		<x64NativeLibraries Include="$(Texture2DDecoderNative)bin\x64\$(Configuration)\$(Texture2DDecoderNativeDll)"/>
+    </ItemGroup>
+</Project>
