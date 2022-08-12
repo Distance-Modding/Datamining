@@ -1,26 +1,15 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<Import Project="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).props"/>
-	
-	<!--
-	<Target Name="CreateBuild" AfterTargets="AfterBuild">
-		<Copy SourceFiles="@(ModContent)" DestinationFiles="@(ModContent->'$(ModFolder)\%(RecursiveDir)%(Filename)%(Extension)')"/>
-	</Target>-->
-
 	<Target Name="CopyExtraFiles" AfterTargets="AfterBuild">
-		<Message Text="@(x32NativeLibraries)"/>
-		<!--
-		<Copy SourceFiles="$(SolutionDir)AssetStudioFBXNative\bin\Win32\$(Configuration)\AssetStudioFBXNative.dll" DestinationFolder="$(TargetDir)x86" ContinueOnError="true" />
-		<Copy SourceFiles="$(SolutionDir)AssetStudioFBXNative\bin\x64\$(Configuration)\AssetStudioFBXNative.dll" DestinationFolder="$(TargetDir)x64" ContinueOnError="true" />
-		<Copy SourceFiles="$(SolutionDir)Texture2DDecoderNative\bin\Win32\$(Configuration)\Texture2DDecoderNative.dll" DestinationFolder="$(TargetDir)x86" ContinueOnError="true" />
-		<Copy SourceFiles="$(SolutionDir)Texture2DDecoderNative\bin\x64\$(Configuration)\Texture2DDecoderNative.dll" DestinationFolder="$(TargetDir)x64" ContinueOnError="true" />
-		-->
+		<Copy SourceFiles="@(x86NativeLibraries)" DestinationFiles="@(x86NativeLibraries->'$(TargetDir)\x86\%(RecursiveDir)%(Filename)%(Extension)')" ContinueOnError="true"/>
+		<Copy SourceFiles="@(x64NativeLibraries)" DestinationFiles="@(x64NativeLibraries->'$(TargetDir)\x64\%(RecursiveDir)%(Filename)%(Extension)')" ContinueOnError="true"/>
 	</Target>
 	<Target Name="PublishExtraFiles" AfterTargets="Publish">
-		<!--
-		<Copy SourceFiles="$(TargetDir)x86\AssetStudioFBXNative.dll" DestinationFolder="$(PublishDir)x86" ContinueOnError="true" />
-		<Copy SourceFiles="$(TargetDir)x64\AssetStudioFBXNative.dll" DestinationFolder="$(PublishDir)x64" ContinueOnError="true" />
-		<Copy SourceFiles="$(TargetDir)x86\Texture2DDecoderNative.dll" DestinationFolder="$(PublishDir)x86" ContinueOnError="true" />
-		<Copy SourceFiles="$(TargetDir)x64\Texture2DDecoderNative.dll" DestinationFolder="$(PublishDir)x64" ContinueOnError="true" />
-		-->
+		<ItemGroup>
+			<x86Files Include="$(TargetDir)x86\**\*"/>
+			<x64Files Include="$(TargetDir)x64\**\*"/>
+		</ItemGroup>
+		<Copy SourceFiles="@(x86Files)" DestinationFiles="@(x86Files->'$(PublishDir)x86\%(RecursiveDir)%(Filename)%(Extension)')" ContinueOnError="true"/>
+		<Copy SourceFiles="@(x64Files)" DestinationFiles="@(x64Files->'$(PublishDir)x64\%(RecursiveDir)%(Filename)%(Extension)')" ContinueOnError="true"/>
 	</Target>
 </Project>

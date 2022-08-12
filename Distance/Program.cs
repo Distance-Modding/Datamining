@@ -22,7 +22,7 @@ namespace Distance
         internal static void SetCulture()
         {
             Thread thread = Thread.CurrentThread;
-            thread.CurrentCulture = CultureInfo.InvariantCulture;
+            thread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
             thread.CurrentUICulture = thread.CurrentCulture;
         }
     }
