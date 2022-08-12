@@ -28,6 +28,7 @@ namespace Distance.Services.Extractors
 
 		protected void LoadAssets()
 		{
+			Console.Title = $"Extracting Unity assets - {GameInfo.ShortName}";
 			assetsManager = new AssetsManager();
 
 			List<FileInfo> assetBundles = new List<FileInfo>();
@@ -57,7 +58,7 @@ namespace Distance.Services.Extractors
 		{
 			string destinationName = GetDestinationFolderName();
 			Console.WriteLine(destinationName);
-			DirectoryInfo destination = extractDir.CreateSubdirectory(destinationName);
+			DirectoryInfo destination = extractDir.CreateSubdirectory(destinationName).CreateSubdirectory("Unity");
 
 			foreach (GameAsset asset in assetInfoDatabase.Assets)
 			{
@@ -110,7 +111,7 @@ namespace Distance.Services.Extractors
 
 					default: return;
 				}
-				Console.WriteLine($"Extracted \"{gameAsset}\"...");
+				Console.WriteLine($"Extracted {gameAsset.type} \"{gameAsset.AssetPath}\" to \"{destination.FullName}\"");
 			}
 			catch (Exception exception)
 			{

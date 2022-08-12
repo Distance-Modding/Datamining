@@ -6,7 +6,7 @@ using static Distance.Constants.RegularExpressions;
 
 namespace Distance.Data
 {
-	public class BuildInfo
+	public class SteamBuildInfo
 	{
 		public const string DEPOT_DOWNLOADER_METADATA = ".DepotDownloader";
 		
@@ -14,13 +14,13 @@ namespace Distance.Data
 
 		public string Manifest { get; protected set; }
 
-		public BuildInfo(int depot, string manifest)
+		public SteamBuildInfo(int depot, string manifest)
 		{
 			Depot = depot;
 			Manifest = manifest;
 		}
 
-		public static BuildInfo FromGameDir(DirectoryInfo gameBaseDir)
+		public static SteamBuildInfo FromGameDir(DirectoryInfo gameBaseDir)
 		{
 			DirectoryInfo metadataDir = new DirectoryInfo(Path.Combine(gameBaseDir.FullName, DEPOT_DOWNLOADER_METADATA));
 			if (!metadataDir.Exists)
@@ -31,7 +31,7 @@ namespace Distance.Data
 			return FromMetadataDir(metadataDir);
 		}
 
-		public static BuildInfo FromGameDirName(DirectoryInfo gameBaseDir)
+		public static SteamBuildInfo FromGameDirName(DirectoryInfo gameBaseDir)
 		{
 			Match match = GameDirRegex.Match(gameBaseDir.Name);
 			if (!match.Success)
@@ -39,10 +39,10 @@ namespace Distance.Data
 				return null;
 			}
 
-			return new BuildInfo(233610, match.Groups["manifest"]?.Value ?? "unknown_manifest_id");
+			return new SteamBuildInfo(233610, match.Groups["manifest"]?.Value ?? "unknown_manifest_id");
 		}
 
-		public static BuildInfo FromMetadataDir(DirectoryInfo metadataDir)
+		public static SteamBuildInfo FromMetadataDir(DirectoryInfo metadataDir)
 		{
 			if (!metadataDir.Exists)
 			{
@@ -54,7 +54,7 @@ namespace Distance.Data
 
 			Match match = ManifestRegex.Match(manifestFile.Name);
 
-			return new BuildInfo(
+			return new SteamBuildInfo(
 				int.Parse(match.Groups["depot"].Value), 
 				match.Groups["manifest"].Value
 			);
@@ -71,6 +71,6 @@ namespace Distance.Data
 			return sb.ToString();
 		}
 
-		public static implicit operator string(BuildInfo info) => info.ToString();
+		public static implicit operator string(SteamBuildInfo info) => info.ToString();
 	}
 }

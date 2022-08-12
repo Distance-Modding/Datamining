@@ -1,7 +1,6 @@
-﻿using Distance.Data;
+﻿using System.IO;
+using Distance.Data;
 using Distance.Util;
-using System.IO;
-using System.Text;
 
 namespace Distance.Services.Extractors
 {
@@ -13,28 +12,17 @@ namespace Distance.Services.Extractors
 
 		public Platform Platform { get; protected set; }
 
+		public GameInfo GameInfo { get; protected internal set; }
+
 		public BaseExtractor(DirectoryInfo gameBaseDir, Platform platform = Platform.Auto)
 		{
 			GameBaseDir = gameBaseDir;
+			GameInfo = GameInfo.From(GameBaseDir);
 			Platform = platform != Platform.Auto ? platform : Game.DetectGamePlatform(gameBaseDir);
 		}
 
 		public abstract void ExtractTo(DirectoryInfo extractDir);
 
-		protected string GetDestinationFolderName()
-		{
-			string version = Subversion.GetVersion(GameBaseDir);
-			string branch = Game.GetBranch(GameBaseDir);
-
-			StringBuilder sb = new StringBuilder($"Distance v{version} {Platform} {branch}");
-
-			BuildInfo info = BuildInfo.FromGameDir(GameBaseDir);
-			if (info != null && !string.IsNullOrEmpty(info))
-			{
-				sb.Append($" ({info})");
-			}
-
-			return sb.ToString();
-		}
+		protected string GetDestinationFolderName() => GameInfo;
 	}
 }

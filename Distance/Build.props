@@ -1,6 +1,8 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<AssetStudioPath>$(SolutionDir)AssetStudio\</AssetStudioPath>
+		<FmodNative>$(AssetStudioPath)AssetStudioGUI\Libraries\</FmodNative>
+		<FmodNativeDll>fmod.dll</FmodNativeDll>
 		<AssetStudioFBXNative>$(AssetStudioPath)AssetStudioFBXNative\</AssetStudioFBXNative>
 		<AssetStudioFBXNativeDll>AssetStudioFBXNative.dll</AssetStudioFBXNativeDll>
 		<Texture2DDecoderNative>$(AssetStudioPath)Texture2DDecoderNative\</Texture2DDecoderNative>
@@ -8,8 +10,10 @@
 	</PropertyGroup>
     <ItemGroup>
 		<x86NativeLibraries Include="$(AssetStudioFBXNative)bin\Win32\$(Configuration)\$(AssetStudioFBXNativeDll)"/>
-		<x64NativeLibraries Include="$(AssetStudioFBXNative)bin\x64\$(Configuration)\$(AssetStudioFBXNativeDll)"/>
 		<x86NativeLibraries Include="$(Texture2DDecoderNative)bin\Win32\$(Configuration)\$(Texture2DDecoderNativeDll)"/>
+		<x86NativeLibraries Include="$(FmodNative)x86\$(FmodNativeDll)"/>
+		<x64NativeLibraries Include="$(AssetStudioFBXNative)bin\x64\$(Configuration)\$(AssetStudioFBXNativeDll)"/>
 		<x64NativeLibraries Include="$(Texture2DDecoderNative)bin\x64\$(Configuration)\$(Texture2DDecoderNativeDll)"/>
+		<x64NativeLibraries Include="$(FmodNative)x64\$(FmodNativeDll)"/>
     </ItemGroup>
 </Project>
