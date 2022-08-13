@@ -17,15 +17,15 @@ namespace Distance.Util
 		public static readonly Dictionary<Platform, DirectoryMapperDelegate> GameFolderToDataPath = new Dictionary<Platform, DirectoryMapperDelegate>()
 		{
 			{ Platform.Auto, AutoDataPathMapper },
-			{ Platform.Windows, dir => new DirectoryInfo(Path.Combine(dir.FullName, $@"Distance_Data\")) },
-			{ Platform.Linux, dir => new DirectoryInfo(Path.Combine(dir.FullName, $@"bin\Distance_Data")) },
 			{ Platform.Mac, dir => new DirectoryInfo(Path.Combine(dir.FullName, $@"Distance.app\Contents\Resources\Data")) },
+			{ Platform.Linux, dir => new DirectoryInfo(Path.Combine(dir.FullName, $@"bin\Distance_Data")) },
+			{ Platform.Windows, dir => new DirectoryInfo(Path.Combine(dir.FullName, $@"Distance_Data\")) },
 		};
 
-		public static bool IsGameDirectory(DirectoryInfo gameBaseDir)
-		{
-			return DetectGamePlatform(gameBaseDir) != Platform.Auto;
-		}
+		public static bool IsGameDirectory(DirectoryInfo gameBaseDir, Platform platform = Platform.Auto)
+			=> platform == Platform.Auto
+			? DetectGamePlatform(gameBaseDir) != Platform.Auto
+			: GameFolderToDataPath[platform](gameBaseDir).Exists;
 
 		public static Platform DetectGamePlatform(DirectoryInfo gameBaseDir)
 		{

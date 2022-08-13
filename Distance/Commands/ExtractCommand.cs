@@ -34,7 +34,7 @@ namespace Distance.Commands
         {
             foreach (DirectoryInfo gameDir in gamesDirectory.GetDirectories())
 			{
-                if (Game.IsGameDirectory(gameDir)) {
+                if (Game.IsGameDirectory(gameDir, Platform)) {
                     await ExtractDirectory(console, gameDir);
 				}
 			}

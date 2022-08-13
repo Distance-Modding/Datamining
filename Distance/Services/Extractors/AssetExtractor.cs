@@ -131,7 +131,7 @@ namespace Distance.Services.Extractors
 
 		~AssetExtractor()
 		{
-			assetsManager.Clear();
+			assetsManager?.Clear();
 			GC.Collect();
 			GC.WaitForFullGCComplete();
 		}
