@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using static Distance.Util.FileSystem;
 
@@ -50,15 +51,27 @@ namespace Distance.Services
 		{
 			DirectoryInfo destinationRoot = DirectoryWithSubfolder(destination);
 			Dictionary<string, FileInfo> toCopy = new Dictionary<string, FileInfo>();
+
+			FileInfo GetDestinationFile(string filePath, string hash, FileInfo sourceFile)
+			{
+				FileInfo tempFile = new FileInfo(Path.Combine(destinationRoot.FullName, filePath));
+				return new FileInfo(Path.Combine(tempFile.Directory.FullName, $"{Path.GetFileNameWithoutExtension(tempFile.Name)}.{hash}{tempFile.Extension}"));
+			}
+
+			DirectoryInfo[] sourceDirectories = Source.GetDirectories()
+				.Select(DirectoryWithSubfolder)
+				.Where(dir => dir.Exists)
+				.ToArray();
+
 			int index = 0;
-			foreach (string filePath in paths) {
+			foreach (string filePath in paths)
+			{
 				Console.Title = $"Merging \"{filePath}\" ({++index}/{paths.Count})";
 
 				Console.WriteLine($"Processing file\t\"{filePath}\"");
 				toCopy.Clear();
-				foreach (DirectoryInfo subdir in Source.GetDirectories())
+				foreach (DirectoryInfo sourceRoot in sourceDirectories)
 				{
-					DirectoryInfo sourceRoot = DirectoryWithSubfolder(subdir);
 					if (!sourceRoot.Exists)
 					{
 						continue;
@@ -70,6 +83,11 @@ namespace Distance.Services
 						string hash = ComputeHash(sourceFile);
 						if (!toCopy.ContainsKey(hash))
 						{
+							if (GetDestinationFile(filePath, hash, sourceFile).Exists)
+							{
+								Console.WriteLine($"\tSkipping...");
+								goto endLoopFilePathMerge;
+							}
 							Console.WriteLine($"\tFound hash\t\"{hash}\"");
 							toCopy.Add(hash, sourceFile);
 						}
@@ -84,8 +102,7 @@ namespace Distance.Services
 					FileInfo sourceFile = item.Value;
 					try
 					{
-						FileInfo tempFile = new FileInfo(Path.Combine(destinationRoot.FullName, filePath));
-						FileInfo destinationFile = new FileInfo(Path.Combine(tempFile.Directory.FullName, $"{Path.GetFileNameWithoutExtension(tempFile.Name)}.{hash}{tempFile.Extension}"));
+						FileInfo destinationFile = GetDestinationFile(filePath, hash, sourceFile);
 						if (!destinationFile.Directory.Exists)
 						{
 							destinationFile.Directory.Create();
@@ -99,6 +116,7 @@ namespace Distance.Services
 						Console.WriteLine($"\tError while copying \"{sourceFile.FullName}\" ({hash})... {anyException}");
 					}
 				}
+				endLoopFilePathMerge:;
 			}
 		}
 
