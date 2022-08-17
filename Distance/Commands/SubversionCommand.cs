@@ -9,14 +9,8 @@ using Distance.Util;
 
 namespace Distance.Commands
 {
-	[Command("subversion", Description = "Output the game version number")]
-    public class SubversionCommand : ICommand
+    public class SubversionCommand
     {
-        public ValueTask ExecuteAsync(IConsole console)
-        {
-            throw new CommandException("You must provide a valid subcommand (game|assembly)", 1);
-        }
-
         [Command("subversion assembly", Description = "Read the game version number from the specified .NET Assembly")]
         public class AssemblySubversionCommand : ICommand
         {

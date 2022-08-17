@@ -4,7 +4,7 @@ using Distance.Util;
 
 namespace Distance.Services.Extractors
 {
-	public abstract class BaseExtractor
+	public abstract class BaseExtractor : IExtractor<DirectoryInfo>
 	{
 		public DirectoryInfo GameBaseDir { get; protected set; }
 
@@ -22,6 +22,8 @@ namespace Distance.Services.Extractors
 		}
 
 		public abstract void ExtractTo(DirectoryInfo extractDir);
+
+		void IExtractor<DirectoryInfo>.ExtractTo(DirectoryInfo extractDir) => ExtractTo(extractDir);
 
 		protected string GetDestinationFolderName() => GameInfo;
 	}

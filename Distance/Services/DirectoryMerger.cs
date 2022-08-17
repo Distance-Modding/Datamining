@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using Distance.Data;
 using static Distance.Util.FileSystem;
 
 namespace Distance.Services
@@ -13,13 +14,13 @@ namespace Distance.Services
 
 		public string SubFolder { get; protected internal set; }
 
-		protected readonly HashSet<FilePath> paths;
+		protected readonly HashSet<StringKey> paths;
 
 		public DirectoryMerger(DirectoryInfo source, string subFolder = null)
 		{
 			Source = source;
 			SubFolder = subFolder;
-			paths = new HashSet<FilePath>();
+			paths = new HashSet<StringKey>();
 			ProcessDirectoryStructure();
 		}
 
@@ -42,7 +43,7 @@ namespace Distance.Services
 
 			foreach (FileInfo file in directory.GetFiles("*", SearchOption.AllDirectories))
 			{
-				paths.Add(new FilePath(file.FullName.Substring(directory.FullName.Length + 1)));
+				paths.Add(new StringKey(file.FullName.Substring(directory.FullName.Length + 1)));
 				Console.Title = $"{paths.Count} files indexed";
 			}
 		}
@@ -145,31 +146,6 @@ namespace Distance.Services
 		~DirectoryMerger()
 		{
 			paths.Clear();
-		}
-
-		protected struct FilePath
-		{
-			private readonly string path;
-
-			public FilePath(string path)
-			{
-				this.path = path;
-			}
-
-			public override bool Equals(object obj)
-			{
-				return obj is FilePath other
-					&& path.ToLower() == other.path.ToLower();
-			}
-
-			public override int GetHashCode()
-			{
-				return -1757656154 + EqualityComparer<string>.Default.GetHashCode(path.ToLower());
-			}
-
-			public override string ToString() => this;
-
-			public static implicit operator string(FilePath instance) => instance.path;
 		}
 	}
 }

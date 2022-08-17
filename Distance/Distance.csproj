@@ -6,6 +6,8 @@
   </PropertyGroup>
   <ItemGroup>
 	<PackageReference Include="CliFx" Version="2.3.0" />
+	<PackageReference Include="ExtendedXmlSerializer" Version="3.7.6" />
+	<PackageReference Include="NPOI" Version="2.5.6" />
   </ItemGroup>
   <ItemGroup>
 	<ProjectReference Include="..\AkWWISE\AkWWISE.csproj" />
