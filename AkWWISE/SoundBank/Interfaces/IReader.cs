@@ -14,9 +14,9 @@ namespace AkWWISE.SoundBank.Interfaces
 
 		bool IsEOF();
 
-		void Seek(long offset);
+		long Seek(long offset);
 
-		void Skip(long bytes);
+		long Skip(long bytes);
 
 		Endianness GuessEndianness();
 

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using AkWWISE.Model;
 using AkWWISE.SoundBank.Interfaces;
@@ -15,10 +17,16 @@ namespace AkWWISE.SoundBank
 		protected readonly BinaryHelper Converter = new BinaryHelper();
 
 		protected readonly Stream stream;
+
+		private readonly Stack<long> seekStack = new Stack<long>();
 		#endregion
 
 		#region Properties
-		public long Position => stream.Position;
+		public long Position
+		{
+			get => stream.Position;
+			set => stream.Position = value;
+		}
 
 		public long Length => stream.Length;
 
@@ -49,11 +57,27 @@ namespace AkWWISE.SoundBank
 		#region Stream Methods
 		public bool IsEOF() => Position >= Length;
 
-		public void Seek(long offset) => stream.Seek(offset, SeekOrigin.Begin);
+		public long Seek(long offset) => Seek(offset, false);
+
+		public long Seek(long offset, bool push) => Move(offset, push, SeekOrigin.Begin);
+
+		public long Skip(long bytes) => Skip(bytes, false);
+
+		public long Skip(long offset, bool push) => Move(offset, push, SeekOrigin.Current);
+
+		public long Move(long offset, bool push, SeekOrigin origin)
+		{
+			if (push)
+			{
+				seekStack.Push(Position);
+			}
+			return stream.Seek(offset, origin);
+		}
 		
-		public void Skip(long bytes) => stream.Seek(bytes, SeekOrigin.Current);
+		public long SeekPop()
+		=> Position = seekStack.Any() ? seekStack.Pop() : Position;
 		#endregion
-		
+
 		#region Read Methods
 		public void ReadGAP(int bytes)
 		{
