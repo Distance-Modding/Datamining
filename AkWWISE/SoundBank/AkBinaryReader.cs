@@ -3,14 +3,19 @@ using System.IO;
 using System.Text;
 using AkWWISE.Model;
 using AkWWISE.SoundBank.Interfaces;
+using AkWWISE.SoundBank.Model;
 
 namespace AkWWISE.SoundBank
 {
 	public class AkBinaryReader : BinaryReader, IReader
 	{
-		protected readonly Stream stream;
+		#region Fields
+		protected static readonly Encoding TextEncoding = Encoding.UTF8;
 
 		protected readonly BinaryHelper Converter = new BinaryHelper();
+
+		protected readonly Stream stream;
+		#endregion
 
 		#region Properties
 		public long Position => stream.Position;
@@ -22,6 +27,8 @@ namespace AkWWISE.SoundBank
 			get => Converter.Endianness;
 			set => Converter.Endianness = value;
 		}
+
+		public byte[] Xorpad { get; set; } = null;
 		#endregion
 
 		#region Constructors
@@ -39,10 +46,140 @@ namespace AkWWISE.SoundBank
 		=> stream = input;
 		#endregion
 
+		#region Stream Methods
 		public bool IsEOF() => Position >= Length;
 
-		public void Seek(int offset) => stream.Seek(offset, SeekOrigin.Begin);
+		public void Seek(long offset) => stream.Seek(offset, SeekOrigin.Begin);
 		
-		public void Skip(int bytes) => stream.Seek(bytes, SeekOrigin.Current);
+		public void Skip(long bytes) => stream.Seek(bytes, SeekOrigin.Current);
+		#endregion
+		
+		#region Read Methods
+		public void ReadGAP(int bytes)
+		{
+			long offsetBefore = Position;
+			Skip(bytes);
+			long offsetAfter = Position;
+			if (offsetBefore + bytes != offsetAfter || offsetAfter > Length)
+			{
+				throw new InvalidOperationException("Can't skip requested bytes (corrupted file?)");
+			}
+		}
+
+		public string ReadSTR(int size)
+		{
+			byte[] data = base.ReadBytes(size);
+
+			if (data.Length != size)
+			{
+				throw new InvalidOperationException("Can't read requested bytes (corrupted file?)");
+			}
+
+			return TextEncoding.GetString(data);
+		}
+
+		public string ReadSTZ() => base.ReadString();
+
+		public double ReadD64()
+		=> Converter.ToDouble(ReadBytes(DataType.TYPE_D64));
+
+		public float ReadF32()
+		=> Converter.ToSingle(ReadBytes(DataType.TYPE_F32));
+
+		public long ReadS64()
+		=> Converter.ToInt64(ReadBytes(DataType.TYPE_S64));
+
+		public ulong ReadU64()
+		=> Converter.ToUInt64(ReadBytes(DataType.TYPE_U64));
+
+		public int ReadS32()
+		=> Converter.ToInt32(ReadBytes(DataType.TYPE_S32));
+
+		public uint ReadU32()
+		=> Converter.ToUInt32(ReadBytes(DataType.TYPE_U32));
+
+		public short ReadS16()
+		=> Converter.ToInt16(ReadBytes(DataType.TYPE_S16));
+
+		public ushort ReadU16()
+		=> Converter.ToUInt16(ReadBytes(DataType.TYPE_U16));
+
+		public byte ReadS8()
+		=> Converter.ToByte(ReadBytes(DataType.TYPE_S8));
+
+		public sbyte ReadU8()
+		=> Converter.ToSByte(ReadBytes(DataType.TYPE_U8));
+
+		public FourCC Read4CC()
+		=> new FourCC(ReadBytes(DataType.TYPE_4CC));
+
+		public uint ReadSID() => ReadU32();
+
+		public uint ReadTID() => ReadU32();
+		#endregion
+
+		#region Utilities
+		public Endianness GuessEndianness()
+		=> Endianness = Converter.GuessEndiannessInt32(PeekBytes(4));
+
+		protected byte[] PeekBytes(int count)
+		{
+			long offsetBefore = Position;
+			byte[] data = ReadBytes(count);
+
+			if (data == null || data.Length != count)
+			{
+				throw new InvalidOperationException("Can't read requested bytes (corrupted file?)");
+			}
+
+			Seek(offsetBefore);
+			return data;
+		}
+
+		public byte[] ReadBytes(DataType type)
+		{
+			byte[] data = ReadBytes(type.ByteLength);
+
+			if (data == null || data.Length != type.ByteLength)
+			{
+				throw new InvalidOperationException("Can't read requested bytes (corrupted file?)");
+			}
+
+			return data;
+		}
+		
+		protected byte[] Xor(byte[] data)
+		{
+			if (Xorpad is null || Xorpad.Length == 0)
+			{
+				return data;
+			}
+
+			long offset = Position - data.Length;
+			if (offset >= Xorpad.Length)
+			{
+				return data;
+			}
+
+			long max = offset + data.Length;
+			if (Position > Xorpad.Length)
+			{
+				max = Xorpad.Length;
+			}
+
+			byte[] result = new byte[data.Length];
+			for (long xorOffset = offset, index = 0; xorOffset < max; ++xorOffset, ++index)
+			{
+				result[index] = (byte)(data[index] ^ Xorpad[xorOffset]);
+			}
+
+			return result;
+		}
+		#endregion
+
+		#region Override Methods
+		public override byte[] ReadBytes(int count)
+		=> Xor(base.ReadBytes(count));
+		#endregion
 	}
 }

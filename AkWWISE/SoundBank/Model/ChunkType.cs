@@ -1,4 +1,5 @@
-﻿using Ardalis.SmartEnum;
+﻿using AkWWISE.Model;
+using Ardalis.SmartEnum;
 
 namespace AkWWISE.SoundBank.Model
 {
@@ -18,6 +19,8 @@ namespace AkWWISE.SoundBank.Model
 			INIT = new ChunkType(10, nameof(INIT), "Plugin");
 
 		public string FriendlyName { get; }
+
+		public FourCC ChunkHeader => new FourCC(Name);
 
 		private ChunkType(int ordinal, string name, string friendlyName)
 		: base(name, ordinal)

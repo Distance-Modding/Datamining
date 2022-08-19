@@ -25,6 +25,12 @@ namespace AkWWISE
 		}
 
 		#region Value to Byte[]
+		public byte[] GetBytes(byte value)
+		=> new byte[] { value };
+
+		public byte[] GetBytes(sbyte value)
+		=> GetBytes(Convert.ToByte(value));
+
 		public byte[] GetBytes(bool value)
 		=> GetBytes(BitConverter.GetBytes(value));
 
@@ -57,6 +63,18 @@ namespace AkWWISE
 		#endregion
 
 		#region Byte[] to Value
+		public byte ToByte(byte[] data, int startIndex = 0)
+		=> data[startIndex];
+
+		public byte ToByte(byte[] data, Endianness endianness, int startIndex = 0)
+		=> Get(ToByte, endianness, data, startIndex);
+
+		public sbyte ToSByte(byte[] data, int startIndex = 0)
+		=> Convert.ToSByte(data[startIndex]);
+
+		public sbyte ToSByte(byte[] data, Endianness endianness, int startIndex = 0)
+		=> Get(ToSByte, endianness, data, startIndex);
+
 		public char ToChar(byte[] data, int startIndex = 0)
 		=> BitConverter.ToChar(GetBytes(data), startIndex);
 
