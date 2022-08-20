@@ -1,11 +1,12 @@
-﻿using AkWWISE.Model;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using AkWWISE.IO.Interfaces;
+using AkWWISE.IO.Model;
 using AkWWISE.SoundBank.Chunks;
 using AkWWISE.SoundBank.Interfaces;
 using AkWWISE.SoundBank.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace AkWWISE.SoundBank
 {

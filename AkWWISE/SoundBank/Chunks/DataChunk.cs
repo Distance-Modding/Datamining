@@ -1,4 +1,5 @@
-﻿using AkWWISE.Model;
+﻿using AkWWISE.IO.Interfaces;
+using AkWWISE.IO.Model;
 using AkWWISE.SoundBank.Interfaces;
 using AkWWISE.SoundBank.Model;
 

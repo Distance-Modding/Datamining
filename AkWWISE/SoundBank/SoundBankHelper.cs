@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using AkWWISE.IO;
 
 namespace AkWWISE.SoundBank
 {

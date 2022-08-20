@@ -1,5 +1,4 @@
-﻿using AkWWISE.Model;
-using Ardalis.SmartEnum;
+﻿using Ardalis.SmartEnum;
 
 namespace AkWWISE.SoundBank.Model
 {

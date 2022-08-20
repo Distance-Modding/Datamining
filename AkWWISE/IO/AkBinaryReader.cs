@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using AkWWISE.Model;
-using AkWWISE.SoundBank.Interfaces;
+using AkWWISE.IO.Interfaces;
+using AkWWISE.IO.Model;
 using AkWWISE.SoundBank.Model;
 
-namespace AkWWISE.SoundBank
+namespace AkWWISE.IO
 {
 	public class AkBinaryReader : BinaryReader, IReader
 	{

@@ -1,4 +1,4 @@
-﻿using AkWWISE.SoundBank.Interfaces;
+﻿using AkWWISE.IO.Interfaces;
 using AkWWISE.SoundBank.Model;
 
 namespace AkWWISE.SoundBank.Chunks

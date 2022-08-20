@@ -1,4 +1,4 @@
-﻿namespace AkWWISE.Model
+﻿namespace AkWWISE.IO.Model
 {
 	public enum Endianness : byte
 	{

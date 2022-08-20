@@ -1,6 +1,6 @@
-﻿using AkWWISE.Model;
+﻿using AkWWISE.IO.Model;
 
-namespace AkWWISE.SoundBank.Interfaces
+namespace AkWWISE.IO.Interfaces
 {
 	public interface IReader
 	{
