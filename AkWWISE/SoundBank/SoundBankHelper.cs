@@ -22,7 +22,7 @@ namespace AkWWISE.SoundBank
 			SoundBank result = new SoundBank();
 			using (AkBinaryReader reader = new AkBinaryReader(stream))
 			{
-
+				result.Visit(reader);
 			}
 			return result;
 		}

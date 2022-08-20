@@ -69,12 +69,15 @@ namespace AkWWISE.SoundBank
 		{
 			if (push)
 			{
-				seekStack.Push(Position);
+				PushOffset();
 			}
 			return stream.Seek(offset, origin);
 		}
-		
-		public long SeekPop()
+
+		public void PushOffset()
+		=> seekStack.Push(Position);
+
+		public long PopOffset()
 		=> Position = seekStack.Any() ? seekStack.Pop() : Position;
 		#endregion
 

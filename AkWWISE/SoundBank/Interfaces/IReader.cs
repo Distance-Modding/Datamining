@@ -18,6 +18,10 @@ namespace AkWWISE.SoundBank.Interfaces
 
 		long Skip(long bytes);
 
+		void PushOffset();
+
+		long PopOffset();
+
 		Endianness GuessEndianness();
 
 		#region Read Methods

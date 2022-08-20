@@ -12,6 +12,8 @@ namespace AkWWISE.SoundBank.Chunks
 
 		public string Name => ChunkType.Name;
 
+		public string Description => ChunkType.FriendlyName;
+
 		public FourCC ChunkHeader => ChunkType.ChunkHeader;
 
 		protected DataChunk(SoundBank soundBank)

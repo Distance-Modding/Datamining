@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
+using AkWWISE.SoundBank;
 using CliFx;
 using CliFx.Attributes;
 using CliFx.Infrastructure;
@@ -34,5 +36,33 @@ namespace Distance.Commands
 				return default;
 			}
 		}
+
+		[Command("soundbank bnk", Description = "Reads WWISE sound banks (.bnk)")]
+		public class SoundBanksWemCommand : ICommand
+		{
+			[CommandParameter(0, Name = "source", Description = "Source folder containing the WWISE xml soundbank information files")]
+			public DirectoryInfo Source { get; set; }
+
+			public ValueTask ExecuteAsync(IConsole console)
+			{
+				SoundBankHelper helper = new SoundBankHelper();
+				foreach (FileInfo bnkFile in Source.GetFiles("*.bnk"))
+				{
+					console.Output.WriteLine($"=== {bnkFile.Name} ===");
+
+					try
+					{
+						SoundBank bnk = helper.LoadFrom(bnkFile);
+					}
+					catch (Exception any)
+					{
+						console.Error.WriteLine(any.Message);
+						throw;
+					}
+				}
+				return default;
+			}
+		}
+	
 	}
 }

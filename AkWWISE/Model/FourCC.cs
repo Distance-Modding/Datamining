@@ -32,7 +32,7 @@ namespace AkWWISE.Model
 			{
 				throw new ArgumentException("Text must be of length of 4", nameof(value));
 			}
-			this = new FourCC(TextEncoding.GetBytes(value));
+			bytes = new FourCC(TextEncoding.GetBytes(value)).bytes;
 		}
 
 		public FourCC(byte[] value)
@@ -53,7 +53,7 @@ namespace AkWWISE.Model
 
 		public override bool Equals(object obj)
 		=> obj is FourCC cC
-		&& EqualityComparer<byte[]>.Default.Equals(bytes, cC.bytes);
+		&& bytes.SequenceEqual(cC.bytes);
 
 		public override int GetHashCode()
 		=> Code;
@@ -67,7 +67,7 @@ namespace AkWWISE.Model
 		#endregion
 		#region Base Operators
 		public static bool operator ==(FourCC a, FourCC b) => a.Equals(b);
-		public static bool operator !=(FourCC a, FourCC b) => !(a == b);
+		public static bool operator !=(FourCC a, FourCC b) => !a.Equals(b);
 		#endregion
 		#endregion
 	}
