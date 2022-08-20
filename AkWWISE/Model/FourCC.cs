@@ -18,9 +18,9 @@ namespace AkWWISE.Model
 
 		public byte[] Bytes => bytes;
 
-		public char[] Chars => Bytes.Cast<char>().ToArray();
+		public char[] Chars => Bytes.Select(b => (char)b).ToArray();
 
-		public string Text => new string(Chars);
+		public string Text => TextEncoding.GetString(Bytes);
 
 		public int Code => ((bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3]);
 		#endregion
@@ -64,6 +64,10 @@ namespace AkWWISE.Model
 		public static implicit operator byte[](FourCC current) => current.Bytes;
 		public static implicit operator char[](FourCC current) => current.Chars;
 		public static implicit operator string(FourCC current) => current.Text;
+		#endregion
+		#region Base Operators
+		public static bool operator ==(FourCC a, FourCC b) => a.Equals(b);
+		public static bool operator !=(FourCC a, FourCC b) => !(a == b);
 		#endregion
 		#endregion
 	}
