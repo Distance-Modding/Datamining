@@ -82,15 +82,16 @@ namespace AkWWISE.IO
 		#endregion
 
 		#region Read Methods
-		public void ReadGAP(int bytes)
+		public byte[] ReadGAP(int bytes)
 		{
 			long offsetBefore = Position;
-			Skip(bytes);
+			byte[] data = ReadBytes(bytes);
 			long offsetAfter = Position;
 			if (offsetBefore + bytes != offsetAfter || offsetAfter > Length)
 			{
 				throw new InvalidOperationException("Can't skip requested bytes (corrupted file?)");
 			}
+			return data;
 		}
 
 		public string ReadSTR(int size)
