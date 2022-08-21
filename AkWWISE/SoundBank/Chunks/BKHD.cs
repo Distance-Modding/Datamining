@@ -14,8 +14,12 @@ namespace AkWWISE.SoundBank.Chunks
 		public override ChunkType ChunkType => ChunkType.BKHD;
 		#endregion
 
+
 		#region Data
-		public uint AkVersion { get; protected set; }
+		#region Backing Fields
+		private uint _akVersion;
+		#endregion
+		public override uint AkVersion => _akVersion;
 
 		public uint AkId { get; protected set; }
 
@@ -48,7 +52,7 @@ namespace AkWWISE.SoundBank.Chunks
 		{
 			base.Visit(reader);
 
-			AkVersion = reader.ReadU32();
+			_akVersion = reader.ReadU32();
 			AkId = reader.ReadU32();
 
 			if (AkVersion <= 26)
@@ -117,7 +121,7 @@ namespace AkWWISE.SoundBank.Chunks
 				reader.Skip(Length - 0x28);
 			}
 
-			Console.WriteLine($"AkSoundBank SDK v.{AkVersion} | Bank #{AkId} | Project #{AkProjectId}");
+			Console.WriteLine($"[BKHD] AkSoundBank SDK v.{AkVersion} | Bank #{AkId} | Project #{AkProjectId}");
 		}
 	}
 }

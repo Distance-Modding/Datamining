@@ -21,6 +21,10 @@ namespace AkWWISE.SoundBank.Chunks
 		public uint Length { get; private set; }
 		#endregion
 
+		#region Shared Properties
+		public virtual uint AkVersion => SoundBank.BKHD.AkVersion;
+		#endregion
+
 		protected DataChunk(SoundBank soundBank)
 		=> SoundBank = soundBank;
 
