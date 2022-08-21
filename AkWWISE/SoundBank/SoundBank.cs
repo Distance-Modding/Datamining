@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -95,10 +94,10 @@ namespace AkWWISE.SoundBank
 			uint length = reader.ReadU32();
 			reader.PopOffset();
 
-			long nextChunk = reader.Position + length;
+			long nextChunk = reader.Position + length + sizeof(uint);
 
 			DataChunk chunk = this[header];
-			if (chunk is null)
+			if (chunk is null) 
 			{
 				reader.Seek(nextChunk);
 				return;
