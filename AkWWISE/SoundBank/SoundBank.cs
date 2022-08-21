@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,7 +11,7 @@ using AkWWISE.SoundBank.Model;
 
 namespace AkWWISE.SoundBank
 {
-	public class SoundBank : IVisitor
+	public class SoundBank : IVisitor, IEnumerable<DataChunk>
 	{
 		#region Properties and Fields
 		#region Serialization
@@ -41,7 +42,7 @@ namespace AkWWISE.SoundBank
 		public readonly Dictionary<FourCC, DataChunk> chunks;
 		#endregion
 		#endregion
-		
+
 		internal SoundBank()
 		{
 			chunks = (dataChunks = new DataChunk[] {
@@ -56,9 +57,10 @@ namespace AkWWISE.SoundBank
 				STID = new STID(this),
 				PLAT = new PLAT(this),
 				INIT = new INIT(this)
-			}).ToDictionary(chunk => chunk.ChunkHeader, chunk => chunk);
+			}).ToDictionary(chunk => chunk.Header, chunk => chunk);
 		}
 
+		#region Visit
 		public void Visit(IReader reader)
 		{
 			VisitFileHeader(reader);
@@ -87,15 +89,44 @@ namespace AkWWISE.SoundBank
 
 		protected void VisitChunk(IReader reader)
 		{
-			FourCC header = reader.Read4CC();
+			FourCC header = reader.Read4CC(); // Find chunk type
+
+			reader.PushOffset();
 			uint length = reader.ReadU32();
-			reader.Skip(length);
+			reader.PopOffset();
+
+			long nextChunk = reader.Position + length;
 
 			DataChunk chunk = this[header];
+			if (chunk is null)
+			{
+				reader.Seek(nextChunk);
+				return;
+			}
 
-			Console.WriteLine($"{header} ({length} bytes) - {chunk.Description}");
+			chunk.Visit(reader);
+			reader.Seek(nextChunk);
+		}
+		#endregion
+
+		
+		public DataChunk this[FourCC header]
+		{
+			get
+			{
+				if (chunks.TryGetValue(header, out var chunk))
+				{
+					return chunk;
+				}
+				return null;
+			}
 		}
 
-		public DataChunk this[FourCC header] => chunks[header];
+		#region IEnumerator
+		IEnumerator<DataChunk> IEnumerable<DataChunk>.GetEnumerator()
+		=> dataChunks.Cast<DataChunk>().GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => dataChunks.GetEnumerator();
+		#endregion
 	}
 }

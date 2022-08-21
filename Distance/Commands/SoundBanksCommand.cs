@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Linq;
 using AkWWISE.SoundBank;
 using CliFx;
 using CliFx.Attributes;
@@ -40,7 +41,7 @@ namespace Distance.Commands
 		[Command("soundbank bnk", Description = "Reads WWISE sound banks (.bnk)")]
 		public class SoundBanksWemCommand : ICommand
 		{
-			[CommandParameter(0, Name = "source", Description = "Source folder containing the WWISE xml soundbank information files")]
+			[CommandParameter(0, Name = "source", Description = "Source folder containing the WWISE soundbank files")]
 			public DirectoryInfo Source { get; set; }
 
 			public ValueTask ExecuteAsync(IConsole console)
@@ -52,7 +53,11 @@ namespace Distance.Commands
 
 					try
 					{
-						SoundBank bnk = helper.LoadFrom(bnkFile);
+						SoundBank soundbank = helper.LoadFrom(bnkFile);
+						foreach (var chunk in from segment in soundbank where segment.Length > 0 select segment)
+						{
+							console.Output.WriteLine($"{chunk.Header} ({chunk.Length} bytes) - {chunk.Description}");
+						}
 					}
 					catch (Exception any)
 					{

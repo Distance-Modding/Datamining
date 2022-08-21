@@ -7,19 +7,26 @@ namespace AkWWISE.SoundBank.Chunks
 {
 	public abstract class DataChunk : IVisitor
 	{
+		#region Properties
 		public SoundBank SoundBank { get; private set; }
 
 		public abstract ChunkType ChunkType { get; }
+
+		public FourCC Header => ChunkType.ChunkHeader;
 
 		public string Name => ChunkType.Name;
 
 		public string Description => ChunkType.FriendlyName;
 
-		public FourCC ChunkHeader => ChunkType.ChunkHeader;
+		public uint Length { get; private set; }
+		#endregion
 
 		protected DataChunk(SoundBank soundBank)
 		=> SoundBank = soundBank;
 
-		public abstract void Visit(IReader reader);
+		public virtual void Visit(IReader reader)
+		{
+			Length = reader.ReadU32();
+		}
 	}
 }
