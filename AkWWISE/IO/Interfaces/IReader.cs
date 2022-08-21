@@ -25,7 +25,7 @@ namespace AkWWISE.IO.Interfaces
 		Endianness GuessEndianness();
 
 		#region Read Methods
-		void ReadGAP(int bytes);
+		byte[] ReadGAP(int bytes);
 
 		string ReadSTR(int size);
 
